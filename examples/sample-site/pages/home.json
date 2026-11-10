@@ -1,0 +1,130 @@
+{
+  "path": "/content/mysite/us/en",
+  "mode": "replace",
+  "basePackage": "aem/base-home-export.zip",
+  "assets": [
+    {
+      "file": "card-1.svg",
+      "title": "Placeholder icon 1",
+      "figmaNode": "10:21",
+      "scale": 2
+    },
+    {
+      "file": "card-2.svg",
+      "title": "Placeholder icon 2",
+      "figmaNode": "10:22",
+      "scale": 2
+    }
+  ],
+  "verify": {
+    "url": "http://localhost:4502/content/mysite/us/en.html?wcmmode=disabled",
+    "tolerance": 2,
+    "viewports": [
+      {
+        "width": 1440,
+        "figmaFrame": "1:2"
+      },
+      {
+        "width": 360,
+        "figmaFrame": "1:4"
+      }
+    ]
+  },
+  "body": {
+    "name": "root",
+    "type": "container",
+    "props": {
+      "layout": "responsiveGrid"
+    },
+    "children": [
+      {
+        "name": "container",
+        "type": "container",
+        "props": {
+          "layout": "responsiveGrid"
+        },
+        "children": [
+          {
+            "name": "intro",
+            "type": "container",
+            "styles": [
+              "section",
+              "bg_dark"
+            ],
+            "verify": {
+              "figma": "Intro",
+              "selector": ".ds-section > .cmp-container"
+            },
+            "children": [
+              {
+                "name": "heading",
+                "type": "text",
+                "styles": [
+                  "center"
+                ],
+                "props": {
+                  "text": "<h2>Sample heading</h2>"
+                }
+              },
+              {
+                "name": "cards",
+                "type": "container",
+                "styles": [
+                  "card_grid"
+                ],
+                "children": [
+                  {
+                    "name": "card_1",
+                    "type": "teaser",
+                    "styles": [
+                      "card"
+                    ],
+                    "props": {
+                      "jcr:title": "<p>Feature 1</p>",
+                      "jcr:description": "<p>Placeholder copy.</p>",
+                      "fileReference": "dam:card-1.svg",
+                      "actionsEnabled": "false",
+                      "textIsRich": [
+                        "true",
+                        "true"
+                      ]
+                    },
+                    "verify": {
+                      "figma": "Feature Card",
+                      "figmaIndex": 0,
+                      "selector": ".ds-card .cmp-teaser",
+                      "index": 0
+                    }
+                  },
+                  {
+                    "name": "card_2",
+                    "type": "teaser",
+                    "styles": [
+                      "card"
+                    ],
+                    "props": {
+                      "jcr:title": "<p>Feature 2</p>",
+                      "jcr:description": "<p>Placeholder copy.</p>",
+                      "fileReference": "dam:card-2.svg",
+                      "actionsEnabled": "false",
+                      "textIsRich": [
+                        "true",
+                        "true"
+                      ]
+                    },
+                    "verify": {
+                      "figma": "Feature Card",
+                      "figmaIndex": 1,
+                      "selector": ".ds-card .cmp-teaser",
+                      "index": 1
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "figma2aem-verify",
+  "private": true,
+  "type": "module",
+  "description": "Browser parity probe for figma2aem (Playwright, Chromium).",
+  "dependencies": {
+    "playwright-core": "1.48.2"
+  }
+}

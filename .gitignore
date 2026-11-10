@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+build/
+verify/node_modules/
+verify/package-lock.json
+.DS_Store
+
+# Client projects stay local: only the synthetic example is published.
+examples/*
+!examples/sample-site/

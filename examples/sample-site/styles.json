@@ -1,0 +1,45 @@
+{
+  "groupLabel": "Design System",
+  "groupNode": "designsystem",
+  "idBase": 1794500000000,
+  "styles": {
+    "container": [
+      {
+        "key": "section",
+        "classes": "ds-section",
+        "label": "DS Section"
+      },
+      {
+        "key": "bg_dark",
+        "classes": "ds-bg--dark",
+        "label": "DS Background Dark"
+      },
+      {
+        "key": "card_grid",
+        "classes": "ds-card-grid",
+        "label": "DS Card Grid"
+      }
+    ],
+    "teaser": [
+      {
+        "key": "card",
+        "classes": "ds-card",
+        "label": "DS Card"
+      }
+    ],
+    "text": [
+      {
+        "key": "center",
+        "classes": "ds-text--center",
+        "label": "DS Text Center"
+      }
+    ],
+    "button": [
+      {
+        "key": "button",
+        "classes": "ds-button",
+        "label": "DS Button"
+      }
+    ]
+  }
+}

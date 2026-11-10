@@ -1,0 +1,75 @@
+{
+  "path": "/content/mysite/us/en/landing",
+  "mode": "create",
+  "pageProps": {
+    "jcr:title": "My Site | Landing",
+    "navTitle": "Landing"
+  },
+  "parentProps": {
+    "sling:resourceType": "mysite/components/page",
+    "cq:template": "/conf/mysite/settings/wcm/templates/content-page",
+    "headerXf": "/content/experience-fragments/mysite/us/en/header/master",
+    "footerXf": "/content/experience-fragments/mysite/us/en/footer/master"
+  },
+  "assets": [
+    {
+      "file": "landing/hero.svg",
+      "title": "Placeholder hero",
+      "figmaFill": "10:30",
+      "crop": true,
+      "width": 1440
+    }
+  ],
+  "body": {
+    "name": "root",
+    "type": "container",
+    "props": {
+      "layout": "responsiveGrid"
+    },
+    "children": [
+      {
+        "name": "container",
+        "type": "container",
+        "props": {
+          "layout": "responsiveGrid"
+        },
+        "children": [
+          {
+            "name": "hero",
+            "type": "container",
+            "styles": [
+              "section"
+            ],
+            "props": {
+              "backgroundImageReference": "dam:landing/hero.svg"
+            },
+            "children": [
+              {
+                "name": "title",
+                "type": "text",
+                "styles": [
+                  "center",
+                  "class:text--legacy-note"
+                ],
+                "props": {
+                  "text": "<h1>Landing title</h1>"
+                }
+              },
+              {
+                "name": "cta",
+                "type": "button",
+                "styles": [
+                  "button"
+                ],
+                "props": {
+                  "jcr:title": "Get started",
+                  "link": "#"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

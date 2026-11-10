@@ -1,0 +1,32 @@
+{
+  "mysite": {
+    "components": {
+      "container": {
+        "policy_100": {
+          "jcr:title": "Container"
+        }
+      },
+      "text": {
+        "policy_200": {
+          "cq:styleGroups": {
+            "item0": {
+              "cq:styles": {
+                "item0": {
+                  "cq:styleId": "1700000000001",
+                  "cq:styleClasses": "text--legacy-note",
+                  "cq:styleLabel": "Legacy note"
+                }
+              }
+            }
+          }
+        }
+      },
+      "teaser": {
+        "policy_300": {}
+      },
+      "button": {
+        "policy_400": {}
+      }
+    }
+  }
+}

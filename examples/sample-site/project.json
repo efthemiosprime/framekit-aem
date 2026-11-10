@@ -1,0 +1,65 @@
+{
+  "aem": {
+    "baseUrl": "http://localhost:4502",
+    "policiesRoot": "/conf/mysite/settings/wcm/policies",
+    "requiredPageProps": [
+      "cq:template=\"/conf/mysite/settings/wcm/templates/content-page\""
+    ],
+    "template": "/conf/mysite/settings/wcm/templates/content-page",
+    "contentRoot": "/content/mysite"
+  },
+  "figma": {
+    "fileKey": "AbCdEfGhIjKlMnOpQrStUv",
+    "pageNode": "1:2",
+    "componentMap": {
+      "Hero": "hero",
+      "Feature Card": "teaser",
+      "Button": "button"
+    }
+  },
+  "damRoot": "/content/dam/mysite/designsystem",
+  "assetsDir": "assets",
+  "buildDir": "build",
+  "styles": "styles.json",
+  "pages": [
+    "pages/home.json",
+    "pages/landing.json"
+  ],
+  "styleLock": "style-ids.lock.json",
+  "lessDir": "styles",
+  "classPrefix": "ds-",
+  "damFolders": {
+    "landing": "Landing"
+  },
+  "package": {
+    "name": "mysite-designsystem",
+    "group": "mysite",
+    "version": "1.0",
+    "damFolderTitle": "Design System",
+    "description": "Sample: replaces the Home body, creates a Landing page, adds Design System styles and DAM assets."
+  },
+  "components": {
+    "container": {
+      "resourceType": "mysite/components/container",
+      "policy": "mysite/components/container/policy_100",
+      "defaults": {
+        "layout": "simple"
+      }
+    },
+    "text": {
+      "resourceType": "mysite/components/text",
+      "policy": "mysite/components/text/policy_200",
+      "defaults": {
+        "textIsRich": "true"
+      }
+    },
+    "teaser": {
+      "resourceType": "mysite/components/teaser",
+      "policy": "mysite/components/teaser/policy_300"
+    },
+    "button": {
+      "resourceType": "mysite/components/button",
+      "policy": "mysite/components/button/policy_400"
+    }
+  }
+}

@@ -28,6 +28,18 @@ project folder; `~` is expanded.
   "lessDir": "/path/to/clientlib/styles/style_system",   // enables the LESS coverage check
   "classPrefix": "ds-",                                 // which classes the coverage check looks at
   "jsClasses": ["ds-tabs__dots"],                   // classes created by JS (no policy needed)
+  "clientlib": {                                       // for `clientlib` (all optional except theme)
+    "theme": "mysite",                                 // → clientlib-mysite; --theme overrides
+    "dir": "../ui.apps/src/main/content/jcr_root/apps/mysite/clientlibs",  // default build/clientlibs
+    "appsPath": "/apps/mysite/clientlibs",            // JCR parent: resources URL + --package filter
+    "categories": ["mysite.site"],                     // default ["<theme>.site"]
+    "dependencies": ["mysite.global"], "embed": [],
+    "cssProcessor": ["default:none", "min:gcc"],       // default shown
+    "jsProcessor": ["default:none", "min:gcc;languageIn=ECMASCRIPT_2015;compilationLevel=whitespace"],
+    "figmaFrames": ["12:3", "40:1"],                   // extra frames for `--figma`: Foundations, Components…
+    "breakpoints": {"tablet": 1023, "mobile": 767},    // max-width per mode, widest first (default shown)
+    "tokenScope": ":root"                              // where Tablet/Mobile overrides go, e.g. ".ds-section"
+  },
   "damFolders": {"landing": "Landing"},      // titles for DAM subfolders
   "styleLock": "style-ids.lock.json",
   "package": {
@@ -47,6 +59,56 @@ project folder; `~` is expanded.
 Find a component's `policy` in the template's policy mappings:
 `/conf/<site>/settings/wcm/templates/<template>/policies.infinity.json`
 (`cq:policy` values under `root/container/<resourceType>`).
+
+Without `lessDir`, the LESS coverage check reads
+`<clientlib.dir>/clientlib-<theme>/styles/style_system` once `clientlib` has
+created it.
+
+### Generated clientlib
+
+`clientlib` writes `clientlib-<theme>/` in the layout of a hand-built site
+clientlib:
+
+| File | Owner |
+|---|---|
+| `.content.xml` (`cq:ClientLibraryFolder`, `allowProxy`, categories, processors, dependencies, embed) | tool: rewritten from `clientlib` config |
+| `styles/style_system/index.less` (`<prefix>foundation.less`, then one file per style in styles.json order, then other `.less` files in the folder) | tool: rewritten |
+| `styles/design-system/*.less` (from the Figma snapshot, see below) | tool: rewritten |
+| `css.txt`, `js.txt`, `styles/index.less`, `variables.less`, `base.less`, `style_system/<prefix>foundation.less`, `style_system/<prefix>*.less`, `scripts/site.js` | you: created once, never overwritten |
+
+### Design system layer (`clientlib --figma`)
+
+`--figma` fetches the breakpoint frames (every page's `verify.viewports`), the
+`clientlib.figmaFrames`, and the file's local variables, and saves them to
+`build/figma-design-system.json`. Later runs reuse that snapshot offline
+(`--snapshot <file>` picks another). Frames are assigned to a mode by width
+against `breakpoints`; variable modes by name ("Desktop", "Tablet", "Mobile").
+
+| File | From Figma |
+|---|---|
+| `tokens.less` | variables → `--<name>` (`codeSyntax.WEB` wins, else the slugged name); default mode on `:root`, Tablet/Mobile modes as `@media` overrides in `tokenScope` (each compared with the next wider mode, because max-width queries nest), other modes (Light/Dark…) under `[data-<collection>="<mode>"]`; aliases stay `var()`; fill and effect styles → `--color-*`, `--shadow-*` |
+| `spacing.less` | gaps, paddings and radii **not** bound to a variable → `--space-<n>`, `--radius-<n>` |
+| `grid.less` | `@<prefix>mq-desktop/tablet/mobile`; each breakpoint frame's COLUMNS layout grid → `--grid-columns/gutter/margin/max-width`; `.<prefix>grid()` |
+| `fonts.less` | `@font-face` per family / weight / style used, `src` = `resources/fonts/<PostScriptName>.woff2` (+ `.woff` if present); needs `appsPath` |
+| `typography.less` | text styles → `--type-<style>-<property>` + `.<prefix>type--<style>()` |
+| `variants.less` | component variants (definition in a component set, else first top-level instance) → `.<prefix>variant--<set>--<variant>()` (box: background, border, radius, flex, gap, padding, shadow) and `…--text()` (text style + color) |
+
+All of it is mixins and custom properties, so no new author classes appear and
+the coverage check is unaffected. Call the mixins from `style_system/` files:
+`.ds-button .cmp-button { .ds-variant--button--primary(); }`.
+
+The generated media queries are literal (`screen and (max-width: 767px)`):
+LESS 1.7.5, AEM's compiler, cannot parse `@media @{var}`, and current LESS
+deprecates `@media @var`.
+
+The Variables API is Enterprise-only. On other plans the 403 is recorded
+in the snapshot, and tokens come from styles and the values in the frames.
+`build/design-system-report.md` lists what is not tokenised: unbound colors,
+spacing, radii, font sizes without a text style, and missing font files.
+
+`--package` zips the folder as it is on disk (including your edits) under
+`appsPath`. Use that zip for a local or AEM 6.5 install. On AEM as a Cloud
+Service `/apps` is immutable, so deploy the folder through ui.apps.
 
 ## styles.json
 

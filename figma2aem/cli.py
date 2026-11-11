@@ -6,7 +6,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import checks, dam, imaging, inventory, jcr, lessgen, mapping, page, preflight, styles, verify
+from . import checks, clientlib, dam, designsystem, imaging, inventory, jcr, lessgen, mapping, page, preflight, styles, verify
 from .aem_client import AemClient
 from .config import ConfigError, Project, credentials, figma_token, load_json, require
 from .figma_client import FigmaClient, crop_rect, fill_image
@@ -96,6 +96,46 @@ def cmd_scaffold_less(project, args):
         name, text = lessgen.scaffold(spec, page_spec, key)
         path, created = lessgen.write_scaffold(args.out, name, text)
         print(("created " if created else "exists, skipped ") + str(path))
+
+
+def _design_snapshot(project):
+    viewports = [(vp["figmaFrame"], vp["width"]) for p in project.pages()
+                 for vp in p.get("verify", {}).get("viewports", []) if vp.get("figmaFrame")]
+    extra = project.clientlib.get("figmaFrames", [])
+    try:
+        return designsystem.figma_snapshot(_figma(project), viewports, extra,
+                                           project.clientlib.get("breakpoints"), http_error=HttpError)
+    except ValueError as exc:
+        raise ConfigError(str(exc)) from exc
+
+
+def cmd_clientlib(project, args):
+    spec = clientlib.load_spec(project.clientlib, args.theme)
+    styles_spec = project.styles()
+    page_spec = {"body": {"name": "pages", "type": "container", "children": [p["body"] for p in project.pages()]}}
+    out_dir = Path(args.out).expanduser() if args.out else project.clientlibs_dir
+    snapshot_path = Path(args.snapshot).expanduser() if args.snapshot else project.build_dir / "figma-design-system.json"
+    if args.figma:
+        snapshot = _design_snapshot(project)
+        _write(snapshot_path, json.dumps(snapshot, indent=1))
+        print(f"Wrote {snapshot_path}" + (f"\n  ! variables: {snapshot['variablesError']}" if snapshot["variablesError"] else ""))
+    snapshot = load_json(snapshot_path) if snapshot_path.exists() else None
+    design = {**project.clientlib, "componentMap": project.figma.get("componentMap")}
+    folder, results, report = clientlib.generate(spec, styles_spec, page_spec, out_dir, project.class_prefix,
+                                                 snapshot=snapshot, design=design)
+    for path, status in results:
+        print(f"{status:<13} {path.relative_to(folder.parent)}")
+    report_path = _write(project.build_dir / "design-system-report.md", report)
+    print(f"\n{folder}  categories={','.join(spec.categories)}")
+    print(report if snapshot else "No Figma snapshot: design-system/ holds empty defaults (run with --figma).")
+    print(f"Report: {report_path}")
+    if args.package:
+        version = args.version or project.package.get("version", "1.0")
+        name = f"{project.package['name']}-{spec.name}"
+        out = write_package(project.build_dir / f"{name}-{version}.zip", name, project.package["group"], version,
+                            f"Client library {spec.name} ({','.join(spec.categories)})",
+                            [spec.jcr_path], clientlib.package_entries(spec, folder))
+        print(f"{out}  (filter {spec.jcr_path})")
 
 
 def cmd_export_assets(project, args):
@@ -337,6 +377,7 @@ COMMANDS = {
     "aem-inventory": (cmd_aem_inventory, "AEM page → component tree with resolved style classes"),
     "styles": (cmd_styles, "Assign/lock Style System IDs and list them"),
     "scaffold-less": (cmd_scaffold_less, "Write starter LESS files for styles"),
+    "clientlib": (cmd_clientlib, "Write clientlib-<theme> (LESS/JS skeleton + component styles)"),
     "export-assets": (cmd_export_assets, "Export page.json assets from Figma"),
     "check": (cmd_check, "Run the pre-package checks (assets, styles, LESS coverage)"),
     "page": (cmd_page, "Render every page's XML to build/pages/"),
@@ -364,6 +405,14 @@ def parser():
             s.add_argument("--key", action="append", help="Style key (repeatable)")
             s.add_argument("--all", action="store_true")
             s.add_argument("--out", required=True, help="Directory for the LESS files")
+        if name == "clientlib":
+            s.add_argument("--theme", help="Theme name → clientlib-<theme> (default: project.json clientlib.theme)")
+            s.add_argument("--out", help="Folder that receives clientlib-<theme>/ (default: clientlib.dir or build/clientlibs)")
+            s.add_argument("--package", action="store_true", help="Also write an /apps package zip (needs clientlib.appsPath)")
+            s.add_argument("--figma", action="store_true",
+                           help="Fetch variables, styles, grids, fonts, variants from Figma into the snapshot first")
+            s.add_argument("--snapshot", help="Snapshot file (default build/figma-design-system.json)")
+            s.add_argument("--version")
         if name == "export-assets":
             s.add_argument("--force", action="store_true", help="Overwrite existing files")
         if name == "package":

@@ -39,7 +39,7 @@ python3 -m figma2aem map           --project $P   # Figma components + variants 
 python3 -m figma2aem aem-inventory --project $P   # current AEM page tree with resolved styles
 python3 -m figma2aem export-assets --project $P   # images from Figma (2x renders / original fills)
 python3 -m figma2aem styles        --project $P   # assign + lock Style System IDs
-python3 -m figma2aem scaffold-less --project $P --all --out <clientlib>/styles/style_system
+python3 -m figma2aem clientlib     --project $P --figma   # clientlib-mysite/: tokens, grid, fonts, type, variants + LESS/JS skeleton
 python3 -m figma2aem check         --project $P   # assets, style references, LESS coverage
 python3 -m figma2aem package       --project $P   # build/<name>-<version>.zip + rollback zip (runs check)
 TARGET_AEM_USER=… TARGET_AEM_PASSWORD=… \
@@ -60,6 +60,7 @@ node verify/probe.mjs $P/build/verify-content_mysite_us_en_landing.json --shots 
 | `aem-inventory` | AEM page + policies | `build/aem-inventory.json` |
 | `export-assets` | Figma | `assets/` (skips existing files unless `--force`) |
 | `styles` | AEM policies | `style-ids.lock.json` |
+| `clientlib` | project.json `clientlib`, styles.json, page.json; Figma with `--figma` (snapshot in `build/figma-design-system.json`) | `clientlib-<theme>/` in `clientlib.dir` (default `build/clientlibs`): rewrites `.content.xml`, `style_system/index.less` and `styles/design-system/`, creates the rest once; `build/design-system-report.md`; `--package`: `build/<name>-clientlib-<theme>-<version>.zip` |
 | `scaffold-less` | styles.json, page.json | new `.less` files only, never overwrites |
 | `check` | pages, assets, styles, LESS | nothing (report; non-zero exit on errors) |
 | `page` | base package / parent page, AEM policies | `build/pages/*.content.xml` (preview) |
@@ -84,4 +85,4 @@ python3 -m unittest discover -s tests
 ```
 Offline tests (no network): docview escaping, stable style IDs, page
 rendering, new pages, class references, checks, crops, preflight,
-policy entries, LESS scaffolding, Figma inventory and geometry.
+policy entries, LESS scaffolding, clientlib generation, Figma design tokens / grid / fonts / type / variants, Figma inventory and geometry.

@@ -109,10 +109,15 @@ that number is 0, it did not read the right policies root.
 ## 5. Component styles (LESS)
 
 ```bash
+python3 -m figma2aem clientlib --project <dir> --figma   # new clientlib-<theme> + design system from Figma
+# or, into an existing clientlib:
 python3 -m figma2aem scaffold-less --project <dir> --all --out <clientlib>/styles/style_system
 ```
 
-Then write the CSS by hand from the Figma design context. Rules learned on the first production build:
+Read `build/design-system-report.md` first: unbound values there are either
+design debt to raise with the designer or values to hard-code knowingly. Then
+write the component CSS by hand from the Figma design context, calling the
+generated `.ds-type--*()`, `.ds-variant--*()` and `.ds-grid()` mixins. Rules learned on the first production build:
 
 - **Scope responsive tokens.** Legacy rules may read the same tokens (e.g.
   `@gutter-x: … var(--grid-margin)`; heading rules reading the type sizes).

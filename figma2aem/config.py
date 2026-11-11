@@ -103,9 +103,26 @@ class Project:
         return specs
 
     @property
+    def clientlib(self):
+        return self.data.get("clientlib", {})
+
+    @property
+    def clientlibs_dir(self):
+        """Folder that receives clientlib-<theme>/ (e.g. ui.apps/…/apps/<app>/clientlibs)."""
+        rel = self.clientlib.get("dir")
+        return self.path(rel) if rel else self.build_dir / "clientlibs"
+
+    @property
     def less_dir(self):
         rel = self.data.get("lessDir")
-        return self.path(rel) if rel else None
+        if rel:
+            return self.path(rel)
+        theme = self.clientlib.get("theme")
+        # Without lessDir, check the generated clientlib's component styles once it exists.
+        if theme:
+            generated = self.clientlibs_dir / f"clientlib-{theme}" / "styles" / "style_system"
+            return generated if generated.is_dir() else None
+        return None
 
     @property
     def class_prefix(self):

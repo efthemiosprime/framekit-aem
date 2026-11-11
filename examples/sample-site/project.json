@@ -28,6 +28,11 @@
   "styleLock": "style-ids.lock.json",
   "lessDir": "styles",
   "classPrefix": "ds-",
+  "clientlib": {
+    "theme": "mysite",
+    "appsPath": "/apps/mysite/clientlibs",
+    "dependencies": []
+  },
   "damFolders": {
     "landing": "Landing"
   },

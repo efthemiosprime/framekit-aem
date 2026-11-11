@@ -67,8 +67,8 @@ def scaffold(styles_spec, page_spec, key, file_prefix="ds-"):
         lines += outline(node)
     lines += ["// " + "=" * 77, "",
               f".{own_class} {{",
-              "    // Use tokens from tokens.less (var(--…)) and the @ds-mq-* breakpoints",
-              "    // from ds-foundation.less; escape calc()/max() as ~\"…\" for AEM's LESS.",
+              f"    // Use tokens from tokens.less (var(--…)) and the @{file_prefix}mq-* breakpoints",
+              f"    // from {file_prefix}foundation.less; escape calc()/max() as ~\"…\" for AEM's LESS.",
               "}", ""]
     file_name = f"{file_prefix}{own_class.removeprefix(file_prefix).split('--')[0].split('__')[0]}.less"
     return file_name, "\n".join(lines)

@@ -34,6 +34,14 @@ class FigmaClient:
             raise net.HttpError(f"Figma did not return nodes: {', '.join(missing)}")
         return data["nodes"]
 
+    def local_variables(self):
+        """meta of GET /files/:key/variables/local ({variables, variableCollections}).
+
+        Enterprise plans only; other plans get HTTP 403 ("Limited by Figma plan").
+        """
+        data = self._fetch_json(f"{API}/files/{self.file_key}/variables/local", headers=self._headers)
+        return data.get("meta", {})
+
     def image_urls(self, node_ids, fmt="png", scale=2):
         ids = ",".join(normalise_id(i) for i in node_ids)
         query = urllib.parse.urlencode({"ids": ids, "format": fmt, "scale": str(scale)})

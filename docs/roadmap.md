@@ -25,7 +25,7 @@ by hand. The steps below close that gap, in order.
 | Role store / learned corrections by fingerprint | `mappings.json` per project: `fileKey:nodeId` and `component:<id>` → decision; accepted corrections reused | ⬜ |
 | Responsive frames matched by name path | `verify` already matches layers by name; **add** reading tablet/mobile values from the frames into a token/LESS report | 🟡 |
 | Variants → BEM classes, states → `:hover` / `:focus-visible` | Style System modifiers (`--secondary`, `--theme-warm`…) | 🟡 manual |
-| Tokens: Variables → styles → Foundations page; coverage report | **step 3** `tokens`: Figma variables/styles → `tokens.less` (+ scoped tablet/mobile overrides), coverage of unmapped values | ⬜ |
+| Tokens: Variables → styles → Foundations page; coverage report | `clientlib --figma`: variables/styles → `design-system/` (tokens with responsive modes, spacing, grid, fonts, typography, variant mixins) + coverage report | 🟡 not yet run against a live file |
 | Three-way diff (Figma / imported / live) + parity + scores | `verify/probe.mjs` (geometry + fonts); **add** copy/image diff and a per-page score table | 🟡 |
 | MCP tools + AI proposals that a person accepts | **step 4** MCP tools: `layer_tree`, `propose`, `set_mapping`, `check`, `package`; AI output stays a proposal until accepted | ⬜ |
 | Studio / admin UI | later; the CLI and the docs first | ⬜ |
